@@ -1,6 +1,6 @@
 import { Crypto } from "https://deno.land/x/peko@1.9.0/mod.ts";
 
-let gcloud: Record<string, string>
+let gcloud
 if (Deno.env.get("DENO_REGION")) {
   const {
     gcp_private_key,
@@ -17,19 +17,20 @@ if (Deno.env.get("DENO_REGION")) {
 }
 
 const gCrypto = new Crypto(gcloud.private_key, { name: "RSA", hash: "SHA-256" })
-const access_creds: Record<string, { access_token: '', dob: 0, expires_in: 0 }> = {}
 
-export const getAccess = async (scope: string) => {
-  if (access_creds[scope]?.access_token && Date.now() < access_creds[scope]?.dob + access_creds[scope]?.expires_in * 1000) {
+const service_payload = {
+  "iss": gcloud.client_email,
+  "scope": "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/devstorage.full_control",
+  "aud": "https://oauth2.googleapis.com/token",
+  "exp": Date.now()/1000 + 3600,
+  "iat": Date.now()/1000
+}
+
+let access_creds = { access_token: '', dob: 0, expires_in: 0 };
+
+export const getAccess = async () => {
+  if (access_creds.access_token && Date.now() < access_creds.dob + access_creds.expires_in * 1000) {
     return access_creds
-  }
-
-  const service_payload = {
-    "iss": gcloud.client_email,
-    "scope": scope,
-    "aud": "https://oauth2.googleapis.com/token",
-    "exp": Date.now()/1000 + 3600,
-    "iat": Date.now()/1000
   }
 
   service_payload.exp = Date.now()/1000 + 3600
@@ -45,9 +46,9 @@ export const getAccess = async (scope: string) => {
     })
   })
 
-  access_creds[scope] = await access_response.json()
+  access_creds = await access_response.json()
 
-  return access_creds[scope]
+  return access_creds
 }
 
 export const POST2Sheet = (state: unknown) => {

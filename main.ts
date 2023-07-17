@@ -5,7 +5,7 @@ const server = new Peko.Server();
 server.use(Peko.logger(console.log));
 
 const kv = await Deno.openKv(); 
-await getAccess("https://www.googleapis.com/auth/spreadsheets");
+await getAccess();
 
 const system = [
   {
