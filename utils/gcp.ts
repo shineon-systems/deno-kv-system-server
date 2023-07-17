@@ -58,7 +58,7 @@ export const POST2Sheet = (state: unknown) => {
       "Authorization": "Bearer " + access_creds.access_token
     },
     body: JSON.stringify({
-      "range": "Requests!A1:B1",
+      "range": "Sheet1!A1:B1",
       "majorDimension": "ROWS",
       "values": [
         [
