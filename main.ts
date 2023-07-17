@@ -140,8 +140,8 @@ server.post("/sense/:id", async (ctx) => {
     controls.push(copy)
   }
 
-  system.forEach(async device_ => console.log((await kv.get(["connected", device_.id]).value)))
-  console.log((await kv.get(["state", "system"]).value))
+  // system.forEach(async device_ => console.log((await kv.get(["connected", device_.id]).value)))
+  // console.log((await kv.get(["state", "system"]).value))
 
   // may need to respond with last_poll but should be set on device 
   // when response arrives

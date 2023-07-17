@@ -52,7 +52,7 @@ export const getAccess = async () => {
 }
 
 export const POST2Sheet = (state: unknown) => {
-  fetch(`https://sheets.googleapis.com/v4/spreadsheets/1vta1Wd62aMtHYvnfWa3M_FY-QM0vMHMppIr7C-zzIY0/values/Requests!A1:B1:append?valueInputOption=USER_ENTERED`, {
+  fetch(`https://sheets.googleapis.com/v4/spreadsheets/1vta1Wd62aMtHYvnfWa3M_FY-QM0vMHMppIr7C-zzIY0/values/Sheet1!A1:B1:append?valueInputOption=USER_ENTERED`, {
     method: "POST",
     headers: {
       "Authorization": "Bearer " + access_creds.access_token
