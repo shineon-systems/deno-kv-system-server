@@ -95,32 +95,8 @@ Deno.test("DEVICE /sense - Device not connected", async () => {
   assert(await response.text() === "Device not connected.");
 });
 
-Deno.test("DEVICE /sense - Device already polled this interval", async () => {
-  const deviceId = "456";
-  await kv.set(["connected", deviceId], Date.now());
-
-  const request = new Request(`http://localhost:7777/sense/${deviceId}`, {
-    method: "POST",
-    body: JSON.stringify([])
-  });
-  const request2 = new Request(`http://localhost:7777/sense/${deviceId}`, {
-    method: "POST",
-    body: JSON.stringify([])
-  });
-  const response = await server.requestHandler(request);
-  await new Promise(res => setTimeout(res, 100));
-  const response2 = await server.requestHandler(request2);
-  assert(response.status === 200);
-  assert(response2.status === 400);
-  assert(await response2.text() === "Device already polled sense this interval.");
-});
-
 Deno.test("DEVICE /sense - Successful device sense and control", async () => {
   const deviceId = "456";
-  await kv.set(["connected", deviceId], Date.now() - system.polling_interval/2);
-  await kv.set(["last_poll", ""], Date.now() - system.polling_interval - 50);
-  await kv.set(["state", deviceId], system.devices["456"]);
-
   const request = new Request(`http://localhost:7777/sense/${deviceId}`, {
     method: "POST",
     body: JSON.stringify(system.devices["456"].sensors)
@@ -134,7 +110,20 @@ Deno.test("DEVICE /sense - Successful device sense and control", async () => {
   assert(typeof responseBody.last_poll === "number");
   assert(typeof responseBody.polling_interval === "number");
   await new Promise(res => setTimeout(res, 1)); // delay for non-blocked KV write
+  console.log((await kv.get(["state", deviceId])).value);
   assert((await kv.get(["state", deviceId])).value);
+});
+
+Deno.test("DEVICE /sense - Device already polled this interval", async () => {
+  const deviceId = "456";
+  const request = new Request(`http://localhost:7777/sense/${deviceId}`, {
+    method: "POST",
+    body: JSON.stringify(system.devices["456"].sensors)
+  });
+  const response = await server.requestHandler(request);
+
+  assert(response.status === 400);
+  assert(await response.text() === "Device already polled sense this interval.");
 });
 
 Deno.test("DEVICE /control - Device not found", async () => {
