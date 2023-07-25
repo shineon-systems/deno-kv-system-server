@@ -44,7 +44,7 @@ Deno.test("DEVICE /connect - Incorrect control config on device", async () => {
   const request = new Request("http://localhost:7777/connect/456", {
     method: "POST",
     body: JSON.stringify({
-      sensors: system.devices[1].sensors,
+      sensors: system.devices["456"].sensors,
       controls: [{ name: "incorrect_control", unit: "C", value: "0" }]
     })
   });
@@ -59,8 +59,8 @@ Deno.test("DEVICE /connect - Successful device connection", async () => {
   const request = new Request("http://localhost:7777/connect/456", {
     method: "POST",
     body: JSON.stringify({
-      sensors: system.devices[1].sensors,
-      controls: system.devices[1].controls,
+      sensors: Object.values(system.devices["456"].sensors),
+      controls: Object.values(system.devices["456"].controls),
     })
   });
   const response = await server.requestHandler(request);
@@ -119,11 +119,11 @@ Deno.test("DEVICE /sense - Successful device sense and control", async () => {
   const deviceId = "456";
   await kv.set(["connected", deviceId], Date.now() - system.polling_interval/2);
   await kv.set(["last_poll", ""], Date.now() - system.polling_interval - 50);
-  await kv.set(["state", deviceId], system.devices[1].sensors[0]);
+  await kv.set(["state", deviceId], system.devices["456"]);
 
   const request = new Request(`http://localhost:7777/sense/${deviceId}`, {
     method: "POST",
-    body: JSON.stringify(system.devices[1].sensors)
+    body: JSON.stringify(system.devices["456"].sensors)
   });
   const response = await server.requestHandler(request);
 
@@ -164,7 +164,9 @@ Deno.test("DEVICE /control - Successful device control", async () => {
 
   const request = new Request(`http://localhost:7777/control/${deviceId}`, {
     method: "POST",
-    body: JSON.stringify(system.devices[1].controls)
+    body: JSON.stringify({
+      controls: Object.values(system.devices["456"].controls)
+    })
   });
   const response = await server.requestHandler(request);
 
