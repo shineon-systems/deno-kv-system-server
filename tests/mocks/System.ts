@@ -43,7 +43,7 @@ export const system: System = {
               return "5"
             }
             return "10"
-          } 
+          }
         }
       }
     }
