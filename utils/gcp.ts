@@ -1,4 +1,4 @@
-import { Crypto } from "https://deno.land/x/peko@1.9.0/mod.ts";
+import { Crypto } from "peko";
 
 let gcloud
 if (Deno.env.get("DENO_REGION")) {

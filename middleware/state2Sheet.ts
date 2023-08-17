@@ -1,4 +1,4 @@
-import { RequestContext, Next } from "https://deno.land/x/peko@2.0.0/mod.ts";
+import { RequestContext, Next } from "peko";
 import { getAccess, POST2Sheet } from "../utils/gcp.ts";
 import { loadSystem } from "../models/System.ts";
 import { Device } from "../types.ts";

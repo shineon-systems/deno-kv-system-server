@@ -1,6 +1,6 @@
-import { Handler } from "https://deno.land/x/peko@2.0.0/mod.ts";
+import { Handler } from "peko";
 import { loadSystem } from "../models/System.ts";
-import { Device, State } from "../types.ts";
+import { Device, Sensor, Controller } from "../types.ts";
 
 const kv = await Deno.openKv(); 
 
@@ -12,14 +12,14 @@ export const connect: Handler = async (ctx) => {
 
   // validate device config
   const body = await ctx.request.json();
-  if (!Object.values(requesting_device.sensors).every(sensor => body.sensors.some((sens: State) => {
+  if (!Object.values(requesting_device.sensors).every(sensor => body.sensors.some((sens: Sensor) => {
     return sensor.name === sens.name &&
     sensor.unit === sens.unit &&
     sensor.value === sens.value
   }))) {
     return new Response("Incorrect sensor config on device.", { status: 400 });
   }
-  if (!Object.values(requesting_device.controls).every(control => body.controls.some((cont: State) => {
+  if (!Object.values(requesting_device.controls).every(control => body.controls.some((cont: Controller) => {
     return control.name === cont.name &&
     control.unit === cont.unit &&
     control.value === cont.value
@@ -63,7 +63,7 @@ export const sense: Handler = async (ctx) => {
   }
   
   // set up state with default sensor/control values then overwrite with sensor data
-  const senseData: State[] = await ctx.request.json();
+  const senseData: Sensor[] = await ctx.request.json();
   const device_clone = structuredClone(requesting_device);
   senseData.forEach(sensor => device_clone.sensors[sensor.name] = sensor);
   await kv.set(["state", requesting_device.id], device_clone);
@@ -88,7 +88,7 @@ export const sense: Handler = async (ctx) => {
   }
 
   // feed system state into device control calcs
-  const controls: State[] = [];
+  const controls: Controller[] = [];
   for (const control_id in requesting_device.controls) {
     const control = device_clone.controls[control_id];
     const device_control_state = { 
@@ -126,7 +126,7 @@ export const control: Handler = async (ctx) => {
   }
   
   const controlData = await ctx.request.json();
-  const deviceState = (await kv.get(["state", requesting_device.id])).value as Record<string, State>;
+  const deviceState = (await kv.get(["state", requesting_device.id])).value as Record<string, Sensor>;
   await kv.set(["state", requesting_device.id], { ...deviceState, ...controlData });
 
   return new Response("Ta!");

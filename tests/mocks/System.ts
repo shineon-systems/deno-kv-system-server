@@ -2,6 +2,7 @@
 import { System } from "../../types.ts"
 
 export const system: System = {
+  id: "test-system",
   polling_interval: 300000,
   timeout: 1000,
   devices: {
