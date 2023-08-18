@@ -5,6 +5,8 @@ export default function Head ({ title, desc }: Record<string, string>) {
     <head>
       <title>${title}</title>
       <meta type="desc" content=${desc} />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+
       <style>
         html, body {
           min-height: 100%:
@@ -16,7 +18,7 @@ export default function Head ({ title, desc }: Record<string, string>) {
           font-family: Helvetica;
         }
       </style>
-      <style>${accumulatedStyles.css}</style>
+      <style dangerouslySetInnerHTML=${{ __html: accumulatedStyles.css }}></style>
     </head>
   `
 }

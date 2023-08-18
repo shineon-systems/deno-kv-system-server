@@ -14,9 +14,7 @@ export default function Home ({ systems }: { systems: System[] }) {
 
       <main>
         ${systems.map(system => html`<${Node} title=${system.id}>
-          ${Object.values(system.devices).map(device => html`<${Node} title=${device.id}>
-
-          </${Node}>`)}
+          ${Object.values(system.devices).map(device => html`<${Node} title=${device.id} />`)}
         </${Node}>`)}
       </main>
     </body>
