@@ -12,9 +12,8 @@ css`
   header {
     width: 100%;
     padding: 10px;
-    border-bottom: 2pm solid black;
+    border-bottom: 2px solid black;
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
   }
 `

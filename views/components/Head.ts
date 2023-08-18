@@ -9,9 +9,11 @@ export default function Head ({ title, desc }: Record<string, string>) {
 
       <style>
         html, body {
-          min-height: 100%:
-          min-width: 100%;
+          height: 100%;
+          width: 100%;
           margin: 0;
+          display: flex;
+          flex-direction: column;
         }
         * {
           box-sizing: border-box;
